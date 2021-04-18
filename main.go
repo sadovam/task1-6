@@ -88,10 +88,15 @@ func processComments(postId int, stmt *sql.Stmt) {
 		return
 	}
 	for _, c := range *comments {
-		_, err := stmt.Exec(c.PostId, c.Id, c.Name, c.Email, c.Body)
-		if err != nil {
-			log.Println(err.Error())
-		}
+		go addCommentToDB(c, stmt)
+	}
+}
+
+func addCommentToDB(comment Comment, stmt *sql.Stmt) {
+	_, err := stmt.Exec(comment.PostId, comment.Id, comment.Name,
+		comment.Email, comment.Body)
+	if err != nil {
+		log.Println(err.Error())
 	}
 }
 
